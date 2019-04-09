@@ -1,0 +1,37 @@
+/*
+RideSearch for UCLA
+styles.css
+
+Copyright (c) 2019 Kevin Hsieh. All Rights Reserved.
+*/
+
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
+  padding: 25px 0px;
+}
+
+th, td {
+  padding: 10px 15px;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.fb-login-button {
+  line-height: initial;
+}
+
+.page-footer {
+  padding: 15px 0px;
+}
+
+.small {
+  font-size: small;
+}

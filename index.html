@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<!--
+RideSearch for UCLA
+index.html
+
+Copyright (c) 2019 Kevin Hsieh. All Rights Reserved.
+-->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="shortcut icon" href="favicon.ico" />
+<title>RideSearch</title>
+<link rel="stylesheet" href="materialize/materialize.css">
+<link rel="stylesheet" href="materialize/icon.css">
+<link rel="stylesheet" href="styles.css">
+<script src="materialize/materialize.js"></script>
+<script src="ridesearch.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  M.FormSelect.init(document.querySelectorAll("select"), {});
+});
+</script>
+</head>
+<body>
+<header><nav>
+  <div class="nav-wrapper container"><a href="" class="brand-logo">
+    <i class="material-icons">near_me</i>RideSearch
+  </a></div>
+</nav></header>
+
+<main class="container">
+  <div class="row center-align hide" id="update-bar"><div class="col s12">
+    An update is available! Click <a id="update-link" target="_blank">here</a>
+    to download it.
+  </div></div>
+
+  <!-- Facebook -->
+  <div class="row" style="min-height: 28px">
+    <div class="col s6">
+      <span id="login_msg">Please log in with Facebook.</span>
+      <span class="hide" id="loading_msg">Loading posts...</span>
+    </div>
+    <div class="col s6 right-align">
+      <div id="fb-root"></div>
+      <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.2&appId=147787075756148&autoLogAppEvents=1"></script>
+      <div class="fb-login-button" data-size="medium"
+        data-button-type="login_with" data-auto-logout-link="true"
+        data-use-continue-as="true" data-onlogin="main()"></div>
+    </div>
+  </div>
+
+  <div class="row"><div class="col s12">
+    <h5>Filters</h5>
+  </div></div>
+  <div class="row">
+    <div class="input-field col s12 m6">
+      <input type="text" id="group" oninput="load()" value="283219605950861">
+      <label>Group ID</label>
+      <span class="helper-text">You must be in the group</span>
+    </div>
+    <div class="input-field col s12 m6">
+      <select id="type" onchange="display()">
+        <option value="driving" selected>Driving</option>
+        <option value="looking">Looking</option>
+      </select>
+      <label>Post type</label>
+      <span class="helper-text"></span>
+    </div>
+    <div class="input-field col s12 m6">
+      <input type="date" id="date" onchange="display()">
+      <label>Ride date</label>
+      <span class="helper-text">Leave unselected to see all dates</span>
+    </div>
+    <div class="input-field col s12 m6">
+      <input type="text" id="keywords" oninput="display()">
+      <label>Keywords</label>
+      <span class="helper-text">Separate keywords with a space</span>
+    </div>
+  </div>
+
+  <div class="row"><div class="col s12">
+    <h5>Results</h5>
+    Click on a result to open it in a new tab.
+  </div></div>
+  <div class="row"><div class="col s12">
+    <table class="highlight" style="table-layout: fixed">
+      <thead><tr>
+        <th style="width: 100px">Ride date</th>
+        <th>Post</th>
+      </tr></thead>
+      <tbody id="posts"></tbody>
+    </table>
+  </div></div>
+</main>
+
+<footer class="page-footer grey lighten-3 black-text"><div class="container">
+  <a target="_blank" href="https://github.com/kahsieh/ridesearch-ucla">
+    RideSearch for UCLA</a>
+  <span id="app-version"></span>
+  Copyright © 2019
+  <a target="_blank" href="https://www.kevinhsieh.net">Kevin Hsieh</a>.
+  All Rights Reserved.
+</div></footer>
+</body>
+</html>
