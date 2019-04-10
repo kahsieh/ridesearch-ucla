@@ -10,7 +10,7 @@ Copyright (c) 2019 Kevin Hsieh. All Rights Reserved.
 // -----------------------------------------------------------------------------
 
 const app = {
-  version: "v0.1.0",
+  version: "v0.1.1",
   update_api: "https://api.github.com/repos/kahsieh/ridesearch-ucla/releases/latest"
 };
 
@@ -35,26 +35,6 @@ function rideDates(post) {
     times.add(date.getTime());
   }
 
-  // Days
-  const kws_days = {
-    "sun": 0,
-    "mon": 1,
-    "tue": 2,
-    "wed": 3,
-    "thu": 4,
-    "fri": 5,
-    "sat": 6
-  };
-  for (const keyword of Object.keys(kws_days)) {
-    if (post.includes(keyword)) {
-      times.add(new Date(
-        date.getFullYear(),
-        date.getMonth(),
-        date.getDate() + (kws_days[keyword] - date.getDay() + 7) % 7
-      ).getTime());
-    }
-  }
-
   // Dates
   const formats = [
     {month: "long", day: "numeric"},
@@ -68,13 +48,37 @@ function rideDates(post) {
       kws_dates[nd.toLocaleString("en-us", format)] = i;
     }
   }
+  let date_found = false;
   for (const keyword of Object.keys(kws_dates)) {
     if (post.includes(keyword)) {
+      date_found = true;
       times.add(new Date(
         date.getFullYear(),
         date.getMonth(),
         date.getDate() + kws_dates[keyword]
       ).getTime());
+    }
+  }
+
+  // Days (only if no dates)
+  const kws_days = {
+    "sun": 0,
+    "mon": 1,
+    "tue": 2,
+    "wed": 3,
+    "thu": 4,
+    "fri": 5,
+    "sat": 6
+  };
+  if (!date_found) {
+    for (const keyword of Object.keys(kws_days)) {
+      if (post.includes(keyword)) {
+        times.add(new Date(
+          date.getFullYear(),
+          date.getMonth(),
+          date.getDate() + (kws_days[keyword] - date.getDay() + 7) % 7
+        ).getTime());
+      }
     }
   }
 
@@ -100,7 +104,6 @@ addEventListener("load", () => {
     }
   }
   req.send();
-  main();
 });
 
 // Facebook initializer.
@@ -110,6 +113,8 @@ window.fbAsyncInit = () => {
     version: "v3.2"
   });
   FB.AppEvents.logPageView();
+  FB.Event.subscribe('xfbml.render', () => id("spinner").classList.add("hide"));
+  main();
 };
 
 // Check for authentication. Calls load() if successful.
@@ -121,17 +126,18 @@ function main() {
       load();
     }
     else {
-      posts = [];
       id("login_msg").classList.remove("hide");
+      posts = [];
+      display();
     }
   });
 }
 
-// Load and preprocess posts from group. Calls display() if successful.
+// Load, preprocess, and display posts from group.
 function load() {
   id("loading_msg").classList.remove("hide");
   FB.api(`/${id("group").value}/feed?limit=100`, response => {
-    if (response && !response.error) {
+    if (response && !response.error && response.data) {
       console.log(`Loaded ${response.data.length} posts`);
       posts = response.data.filter(
         post => post.updated_time && post.message && post.id);
@@ -144,13 +150,12 @@ function load() {
         };
         post.rideDates = rideDates(post);
       }
-      id("loading_msg").classList.add("hide");
-      display();
     }
     else {
       posts = [];
-      id("loading_msg").classList.add("hide");
     }
+    display();
+    id("loading_msg").classList.add("hide");
   });
 }
 
@@ -185,9 +190,8 @@ function check(post) {
   // Desired date.
   let ddate = null;
   if (id("date").value != "") {
-    let parts = id("date").value.split("-");
-    --parts[1];  // zero-base the month
-    ddate = new Date(...parts);
+    let parts = id("date").value.split("/");
+    ddate = new Date(parts[2], parts[0] - 1, parts[1]);
   }
   // Actual date(s).
   let gdates = post.rideDates;
