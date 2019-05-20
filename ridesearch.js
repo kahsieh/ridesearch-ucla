@@ -10,10 +10,11 @@ Copyright (c) 2019 Kevin Hsieh. All Rights Reserved.
 // -----------------------------------------------------------------------------
 
 const app = {
-  version: "v0.1.1",
+  version: "v0.1.2",
   update_api: "https://api.github.com/repos/kahsieh/ridesearch-ucla/releases/latest"
 };
 
+let userID = null;
 let posts = [];
 
 // -----------------------------------------------------------------------------
@@ -121,6 +122,7 @@ window.fbAsyncInit = () => {
 function main() {
   FB.getLoginStatus(response => {
     if (response.status == "connected") {
+      userID = response.authResponse.userID;
       console.log("Acquired token: " + response.authResponse.accessToken)
       id("login_msg").classList.add("hide");
       load();
@@ -141,18 +143,26 @@ function load() {
       console.log(`Loaded ${response.data.length} posts`);
       posts = response.data.filter(
         post => post.updated_time && post.message && post.id);
-      for (let post of posts) {
-        post.includes = kw =>
-          post.message.toLowerCase().includes(kw.toLowerCase());
-        post.open = _ => {
-          let id = post.id.split("_");
-          window.open(`https://www.facebook.com/${id[0]}/posts/${id[1]}`);
-        };
-        post.rideDates = rideDates(post);
-      }
+    }
+    else if (userID == test_userID && id("group").value == test_groupID) {
+      // Test user, test group
+      posts = test_posts;
+    }
+    else if (id("group").value == test_groupID2) {
+      // Real user, test group
+      posts = test_posts2;
     }
     else {
       posts = [];
+    }
+    for (let post of posts) {
+      post.includes = kw =>
+        post.message.toLowerCase().includes(kw.toLowerCase());
+      post.open = _ => {
+        let id = post.id.split("_");
+        window.open(`https://www.facebook.com/${id[0]}/posts/${id[1]}`);
+      };
+      post.rideDates = rideDates(post);
     }
     display();
     id("loading_msg").classList.add("hide");
@@ -208,3 +218,14 @@ function check(post) {
 
   return true;
 }
+
+// -----------------------------------------------------------------------------
+// TESTING
+// -----------------------------------------------------------------------------
+
+const test_userID = "106825647186095";
+const test_groupID = "480950945776423";
+const test_posts = JSON.parse("[{\"message\":\"Driving UCLA -> San Diego (north county) on Friday 5/24 at 8pm. 2 spots $20 each. Message me if interested\",\"updated_time\":\"2019-05-22T21:22:54+0000\",\"id\":\"480950945776423_498916480646536\",\"rideDates\":[\"2019-05-24T07:00:00.000Z\"]},{\"message\":\"looking for UCLA -> UCI (05/23) Thursday before 9:30 AM!\",\"updated_time\":\"2019-05-22T21:21:34+0000\",\"id\":\"480950945776423_498916450646539\",\"rideDates\":[\"2019-05-23T07:00:00.000Z\"]},{\"message\":\"Looking for UCLA-> Riverside sat morning 5/25!\",\"updated_time\":\"2019-05-22T21:21:25+0000\",\"id\":\"480950945776423_498916420646542\",\"rideDates\":[\"2019-05-25T07:00:00.000Z\"]},{\"message\":\"DRIVING: UCLA --> UCSD $15 FRIDAY 6PM\\n\\nCan leave anytime after 4:00PM, but depends on traffic\",\"updated_time\":\"2019-05-22T21:21:07+0000\",\"id\":\"480950945776423_498916397313211\",\"rideDates\":[\"2019-05-24T07:00:00.000Z\"]},{\"message\":\"DRIVING: UCLA --> SD (UTC), Thursday Night.\\n\\nMessage me if interested.\",\"updated_time\":\"2019-05-22T21:20:57+0000\",\"id\":\"480950945776423_498916353979882\",\"rideDates\":[\"2019-05-23T07:00:00.000Z\"]}]");
+
+const test_groupID2 = "2309901852625556";
+const test_posts2 = JSON.parse("[{\"message\":\"Driving UCLA -> San Diego (north county) on Friday 5/24 at 8pm. 2 spots $20 each. Message me if interested\",\"updated_time\":\"2019-05-22T21:22:54+0000\",\"id\":\"2309901852625556_2309902922625449\",\"rideDates\":[\"2019-05-24T07:00:00.000Z\"]},{\"message\":\"looking for UCLA -> UCI (05/23) Thursday before 9:30 AM!\",\"updated_time\":\"2019-05-22T21:21:34+0000\",\"id\":\"2309901852625556_2309902449292163\",\"rideDates\":[\"2019-05-23T07:00:00.000Z\"]},{\"message\":\"Looking for UCLA-> Riverside sat morning 5/25!\",\"updated_time\":\"2019-05-22T21:21:25+0000\",\"id\":\"2309901852625556_2309902382625503\",\"rideDates\":[\"2019-05-25T07:00:00.000Z\"]},{\"message\":\"DRIVING: UCLA --> UCSD $15 FRIDAY 6PM\\n\\nCan leave anytime after 4:00PM, but depends on traffic\",\"updated_time\":\"2019-05-22T21:21:07+0000\",\"id\":\"2309901852625556_2309902275958847\",\"rideDates\":[\"2019-05-24T07:00:00.000Z\"]},{\"message\":\"DRIVING: UCLA --> SD (UTC), Thursday Night.\\n\\nMessage me if interested.\",\"updated_time\":\"2019-05-22T21:20:57+0000\",\"id\":\"2309901852625556_2309902205958854\",\"rideDates\":[\"2019-05-23T07:00:00.000Z\"]}]");
