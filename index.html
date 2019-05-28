@@ -30,6 +30,9 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 </head>
 <body>
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.3&appId=1629026357232795&autoLogAppEvents=1"></script>
+
 <header><nav>
   <div class="nav-wrapper container"><a href="" class="brand-logo">
     <i class="material-icons">near_me</i>RideSearch
@@ -53,8 +56,6 @@ document.addEventListener("DOMContentLoaded", function () {
       </p>
     </div>
     <div class="col s12 m6 right-align">
-      <div id="fb-root"></div>
-      <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.2&appId=147787075756148&autoLogAppEvents=1"></script>
       <div class="fb-login-button" data-size="medium"
         data-button-type="login_with" data-auto-logout-link="true"
         data-use-continue-as="true" data-onlogin="main()"></div>

@@ -111,7 +111,7 @@ addEventListener("load", () => {
 window.fbAsyncInit = () => {
   FB.init({
     appId: "1629026357232795",
-    version: "v3.2"
+    version: "v3.3"
   });
   FB.AppEvents.logPageView();
   FB.Event.subscribe('xfbml.render', () => id("spinner").classList.add("hide"));
